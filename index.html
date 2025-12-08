@@ -1,419 +1,99 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Unblockify — Game Hub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unblockify</title>
 
-  <!-- Retro font -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    font-family: "Press Start 2P", sans-serif;
+    color: white;
+  }
 
-  <style>
-    :root{
-      --purple-a: #6b4eff;
-      --purple-b: #9d4bff;
-      --crt-border: rgba(120,0,255,0.35);
-      --topbar-height: 64px;
-    }
+  /* Top bar container */
+  .topbar {
+    width: 100%;
+    height: 55px;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom: 2px solid #2c2c2c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
 
-    html,body{
-      height:100%;
-      margin:0;
-      background: radial-gradient(ellipse at center,#000000 0%, #000000 60%);
-      color:#eaeaea;
-      font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      overflow-x:hidden;
-    }
+  /* Left menu button */
+  .menu-btn {
+    background: rgba(0,0,0,0.6);
+    color: #9d4bff;
+    border: 2px solid rgba(157,75,255,0.4);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(157,75,255,0.5);
+  }
 
-    /* TOP BAR (semi-transparent black with CRT glow) */
-    #topbar{
-      position:fixed;
-      left:0; right:0; top:0;
-      height:var(--topbar-height);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 16px;
-      z-index:1200;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(4px);
-      border-bottom: 1px solid var(--crt-border);
-      box-shadow: 0 0 18px rgba(120,0,255,0.18);
-    }
+  /* Middle semi-transparent bar */
+  .middle-box {
+    flex-grow: 1;
+    margin: 0 12px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
 
-    /* Hamburger */
-    #menuBtn{
-      background:transparent;
-      border:none;
-      color:#fff;
-      font-size:26px;
-      cursor:pointer;
-      width:48px; height:48px;
-      display:flex; align-items:center; justify-content:center;
-    }
-    #menuBtn:focus{outline:2px solid rgba(255,255,255,0.08)}
+  /* Clock text */
+  #clock {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px rgba(140,100,255,0.9);
+  }
 
-    /* Centered logo container */
-    #logoWrap{
-      position:absolute;
-      left:0; right:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      pointer-events:none; /* let clicks pass to menu/clock */
-    }
-    #brandLogo{
-      height:42px; /* logo size - adjust if you want larger */
-      pointer-events:auto;
-      image-rendering:optimizeSpeed;
-      display:block;
-    }
-
-    /* Clock on right */
-    #clock{
-      font-family: 'Press Start 2P', monospace;
-      font-size:12px;
-      color:#ffffff;
-      text-shadow: 0 0 8px rgba(150,120,255,0.8);
-      min-width:88px;
-      text-align:right;
-    }
-
-    /* Sidebar (left) */
-    #sidebar{
-      position:fixed;
-      top:0;
-      left:-280px;
-      width:280px;
-      height:100%;
-      background: rgba(0,0,0,0.78);
-      backdrop-filter: blur(6px);
-      border-right:1px solid var(--crt-border);
-      box-shadow: 6px 0 22px rgba(120,0,255,0.22);
-      padding-top:calc(var(--topbar-height) + 10px);
-      z-index:1100;
-      transition:left .28s cubic-bezier(.2,.9,.2,1);
-    }
-    #sidebar.open{ left:0; }
-
-    #sidebar .navItem{
-      padding:14px 18px;
-      color:#fff;
-      text-decoration:none;
-      font-size:14px;
-      display:block;
-    }
-    #sidebar .navItem:hover{
-      background: rgba(150,80,255,0.08);
-    }
-
-    /* Content area */
-    #main{
-      padding-top: calc(var(--topbar-height) + 20px);
-      max-width:1100px;
-      margin: 0 auto;
-      min-height: calc(100vh - var(--topbar-height));
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      gap: 18px;
-      padding-bottom:60px;
-    }
-
-    /* Grid of buttons */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap:18px;
-      width:100%;
-      align-items:start;
-    }
-
-    /* CRT purple button (detailed) */
-    .crtBtn{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:14px 18px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(135deg, var(--purple-a) 0%, var(--purple-b) 100%);
-      color:#fff;
-      font-family:'Press Start 2P', monospace;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:1px;
-      box-shadow: 0 6px 24px rgba(120,40,255,0.14), inset 0 0 6px rgba(255,255,255,0.06);
-      cursor:pointer;
-      overflow:hidden;
-      transition: transform .18s ease, box-shadow .18s ease;
-      min-height:56px;
-    }
-    .crtBtn:hover{
-      transform: translateY(-6px);
-      box-shadow: 0 12px 36px rgba(160,80,255,0.28), inset 0 0 10px rgba(255,255,255,0.06);
-    }
-    /* play icon */
-    .crtBtn svg{ width:18px; height:18px; fill:currentColor; z-index:2; }
-
-    /* scanline overlay */
-    .crtBtn::before{
-      content:"";
-      position:absolute; inset:0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.05) 0px,
-        rgba(255,255,255,0.05) 1px,
-        transparent 2px,
-        transparent 4px
-      );
-      pointer-events:none;
-      mix-blend-mode:overlay;
-    }
-
-    /* button text (keeps on top) */
-    .crtBtn .txt{ position:relative; z-index:3; text-shadow:0 0 6px rgba(160,120,255,0.9); }
-
-    /* small layout niceties for mobile */
-    @media (max-width:520px){
-      #topbar{height:56px}
-      #brandLogo{height:36px}
-      .crtBtn{padding:12px 14px; font-size:11px}
-    }
-
-    /* subtle page center glow */
-    #main::before{
-      content:"";
-      position:fixed;
-      left:50%; transform:translateX(-50%);
-      top: var(--topbar-height);
-      width: 800px; max-width:90%;
-      height: 360px;
-      pointer-events:none;
-      background: radial-gradient(ellipse at center, rgba(110,50,255,0.06), rgba(0,0,0,0));
-      z-index:5;
-      filter: blur(18px);
-    }
-
-    /* home heading */
-    .heading{
-      text-align:center;
-      margin: 0 0 8px 0;
-      font-family:'Press Start 2P', monospace;
-      letter-spacing:1px;
-      color:#ffffff;
-      font-size:14px;
-      text-shadow: 0 0 8px rgba(150,120,255,0.7);
-    }
-
-    /* footer small */
-    footer { text-align:center; color:#999; font-size:12px; margin-top:26px; }
-  </style>
+</style>
 </head>
 <body>
 
-  <!-- TOP BAR -->
-  <div id="topbar" role="banner">
-    <button id="menuBtn" aria-label="Open menu" title="Menu">☰</button>
+<!-- TOPBAR -->
+<div class="topbar">
 
-    <!-- centered logo -->
-    <div id="logoWrap" aria-hidden="false">
-      <img id="brandLogo" src="https://i.imgur.com/LnWVyXS.png" alt="Unblockify logo">
-    </div>
+  <!-- Left Button -->
+  <button class="menu-btn">≡ Menu</button>
 
-    <div id="clock" aria-live="polite">--:--</div>
+  <!-- Middle translucent clock bar -->
+  <div class="middle-box">
+    <span id="clock">--:-- --</span>
   </div>
 
-  <!-- LEFT SLIDE MENU -->
-  <nav id="sidebar" aria-hidden="true">
-    <a class="navItem" href="#" onclick="closeMenu(); scrollToTop();">🏠 Home</a>
-    <a class="navItem" href="#" onclick="closeMenu(); document.getElementById('games').scrollIntoView({behavior:'smooth'});">🎮 All Games</a>
-    <a class="navItem" href="#" onclick="closeMenu(); alert('Settings coming soon');">⚙ Settings</a>
-    <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:14px 0;">
-    <div style="padding:12px;color:#ccc;font-size:13px">Unblockify</div>
-  </nav>
+</div>
 
-  <!-- MAIN -->
-  <main id="main" role="main">
-    <div style="width:100%;max-width:1100px;padding:18px;">
-      <h2 class="heading">TUFF GAMES — Launchpad</h2>
 
-      <!-- GRID -->
-      <section id="games" class="grid" aria-label="Game list">
+<script>
+  function updateClock() {
+    let now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let ampm = hours >= 12 ? "PM" : "AM";
 
-        <!-- 1 Retro Bowl -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/curly-journey/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Retro Bowl</span>
-        </button>
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    if (minutes < 10) minutes = "0" + minutes;
 
-        <!-- 2 CrazyCattle3D -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/improved-octo-succotash/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play CrazyCattle3D</span>
-        </button>
+    document.getElementById("clock").textContent = `${hours}:${minutes} ${ampm}`;
+  }
 
-        <!-- 3 Cookie Clicker -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/jubilant-dollop/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Cookie Clicker</span>
-        </button>
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
 
-        <!-- 4 Drive Mad -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/stunning-eureka/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Drive Mad</span>
-        </button>
-
-        <!-- 5 Drift Hunters -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/cuddly-invention/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Drift Hunters</span>
-        </button>
-
-        <!-- 6 Minesweeper (external author) -->
-        <button class="crtBtn" onclick="launch('https://nickarocho.github.io/minesweeper/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Minesweeper</span>
-        </button>
-
-        <!-- 7 Eaglercraft -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/ubiquitous-enigma/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Eaglercraft</span>
-        </button>
-
-        <!-- 8 NZ: Portable -->
-        <button class="crtBtn" onclick="launch('https://rawcdn.githack.com/gn-math/assets/main/308/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play NZ: Portable</span>
-        </button>
-
-        <!-- 9 Idle Dice -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/scaling-spork/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Idle Dice</span>
-        </button>
-
-        <!-- 10 Idle Breakout -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/reimagined-parakeet/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Idle Breakout</span>
-        </button>
-
-        <!-- 11 Drag Racer V3 -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/jubilant-fishstick/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Drag Racer V3</span>
-        </button>
-
-        <!-- 12 Tiny Fishing -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/automatic-garbanzo/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Tiny Fishing</span>
-        </button>
-
-        <!-- 13 Bacon May Die -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/automatic-dollop/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Bacon May Die</span>
-        </button>
-
-        <!-- 14 Friday Night Funkin' -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/shiny-lamp/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Friday Night Funkin'</span>
-        </button>
-
-        <!-- 15 1v1.lol -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/scaling-octo-barnacle/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play 1v1.lol</span>
-        </button>
-
-        <!-- 16 Vex 3 -->
-        <button class="crtBtn" onclick="launch('https://y4b01m4tt.github.io/probable-robot/')">
-          <svg viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-          <span class="txt">Play Vex 3</span>
-        </button>
-
-      </section>
-
-      <footer>
-        Unblockify — a TUFF Games project
-      </footer>
-    </div>
-  </main>
-
-  <script>
-    /* Menu toggle */
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.getElementById('sidebar');
-    menuBtn.addEventListener('click', toggleMenu);
-
-    function toggleMenu(){
-      const open = sidebar.classList.toggle('open');
-      sidebar.setAttribute('aria-hidden', (!open).toString());
-    }
-    function closeMenu(){
-      sidebar.classList.remove('open');
-      sidebar.setAttribute('aria-hidden','true');
-    }
-    function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
-
-    /* Live clock (HH:MM) */
-    function updateClock(){
-      const el = document.getElementById('clock');
-      const d = new Date();
-      const hh = String(d.getHours()).padStart(2,'0');
-      const mm = String(d.getMinutes()).padStart(2,'0');
-      el.textContent = hh + ':' + mm;
-    }
-    updateClock();
-    setInterval(updateClock,1000);
-
-    /* Launch a game in about:blank and make it fullscreen-like by placing an iframe that fills the tab.
-       NOTE: Because it's about:blank, some games that require persistent storage might not keep saves.
-       If you want saves, open them directly (I'll add that option if you want). */
-    function launch(url){
-      const win = window.open('about:blank','_blank');
-      if(!win){
-        alert('Popup blocked. Please allow popups for this site.');
-        return;
-      }
-      // prepare blank doc
-      win.document.title = 'about:blank';
-      win.document.body.style.margin = '0';
-      win.document.body.style.background = '#000';
-      win.document.body.style.overflow = 'hidden';
-
-      // create iframe
-      const iframe = win.document.createElement('iframe');
-      iframe.src = url;
-      iframe.style.position = 'fixed';
-      iframe.style.top = '0';
-      iframe.style.left = '0';
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.border = 'none';
-      iframe.style.margin = '0';
-      iframe.style.padding = '0';
-
-      // remove favicon if any
-      const removeFavs = () => {
-        const links = win.document.querySelectorAll("link[rel~='icon']");
-        links.forEach(l => l.remove());
-      };
-
-      win.document.body.appendChild(iframe);
-      // try remove any favicon after iframe loads (best-effort)
-      iframe.addEventListener('load', removeFavs);
-      removeFavs();
-    }
-  </script>
 </body>
 </html>
