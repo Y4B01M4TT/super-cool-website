@@ -21,42 +21,56 @@ body {
     backdrop-filter: blur(6px);
 }
 
-/* Top Menu (Hidden by default) */
-#top-menu {
+/* Wrapper controls sliding */
+#glass-menu-wrapper {
     position: fixed;
-    top: -100px;
-    left: 0;
+    top: -120px;   /* Hidden above screen */
     width: 100%;
-    height: 100px;
-    background: rgba(0, 10, 30, 0.45);
-    border-bottom: 1px solid #00aaff;
-    backdrop-filter: blur(12px);
-    transition: top 0.4s ease;
+    display: flex;
+    justify-content: center;
+    transition: top 0.45s ease;
     z-index: 999;
 }
 
-#top-menu.open {
+/* The "search bar style" nav */
+#glass-menu {
+    width: 92%;
+    max-width: 1200px;
+    height: 85px;
+    margin-top: 20px;
+
+    background: rgba(0, 20, 40, 0.35);
+    border: 1px solid #00aaff;
+    border-radius: 50px;
+
+    backdrop-filter: blur(14px);
+    box-shadow: 0 0 20px #0066ff44;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+/* Slide visible state */
+#glass-menu-wrapper.open {
     top: 0;
 }
 
-.menu-content {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-}
-
-#top-menu a {
-    color: #8cd9ff;
+#glass-menu a {
     text-decoration: none;
+    color: #8cd9ff;
     font-size: 20px;
+    font-weight: 500;
 }
 
-#mini-logo {
-    height: 45px;
-    margin-left: auto;
-    margin-right: 20px;
+#menu-clock {
+    font-size: 20px;
+    color: #a0e6ff;
+}
+
+#menu-logo {
+    height: 50px;
+    filter: drop-shadow(0 0 8px #00aaff);
 }
 
 /* Landing Page */
@@ -76,6 +90,6 @@ body {
 #floating-clock {
     color: #6ae2ff;
     font-size: 32px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     filter: drop-shadow(0 0 8px #00ccff);
 }
